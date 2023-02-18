@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lostandfound.mapper.GoodsMapper">
+
+    <select id="queryAllgoodslistByuserId" resultType="Goods">
+        select * from  goods where userId = #{userId}
+    </select>
+
+
+
+    <insert id="add_goods" parameterType="Goods" >
+        insert into goods (userId,brand,originalPrice,sellPrice,ISbargain,description) values (#{userId},#{brand},#{originalPrice},#{sellPrice},#{ISbargain},#{description})
+    </insert>
+
+
+    <delete id="deletegoods" parameterType="int">
+        delete from goods where id = #{id}
+    </delete>
+
+
+    <select id="getmysellgoods" resultType="Goods">
+        SELECT * FROM  dynamic WHERE userId = #{userid} AND tag = '#二手交易'
+    </select>
+
+    <delete id="deletemysellgoods" parameterType="int">
+        delete from dynamic where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lostandfound.mapper.DynamicMapper">
+
+
+<!--多表查询的-->
+
+    <select id="queryDynamicList" resultMap="DynamicAndComments">
+        select * from  dynamic
+    </select>
+
+
+
+
+    <resultMap id="DynamicAndComments" type="Dynamic">
+        <result property="id" column="id"/>
+        <association property="user" javaType="User" select="getUser" column="userId"/>
+        <collection property="comments" javaType="ArrayList" ofType="comment" select="getComments" column="id"/>
+    </resultMap>
+
+    <select id="getUser" resultType="User">
+        select * from user where id = #{id}
+    </select>
+
+    <resultMap id="userAndComments" type="comment">
+        <association property="user" javaType="User" select="getUser" column="userId"/>
+    </resultMap>
+
+    <select id="getComments" resultMap="userAndComments">
+        select * from comments where dynamicId = #{id}
+    </select>
+
+
+<!--根据tag来多表查询-->
+
+    <select id="loadDynamicByTag" resultMap="DynamicAndComments">
+        select * from  dynamic where tag = #{tag}
+    </select>
+
+
+    <select id="queryDynamicListByUserid" resultMap="DynamicAndComments">
+        select * from  dynamic  WHERE userId = #{id}
+    </select>
+
+
+<!--    <resultMap id="DynamicAndComments" type="Dynamic">-->
+<!--        <result property="id" column="id"/>-->
+<!--        <association property="user" javaType="User" select="getUser" column="userId"/>-->
+<!--        <collection property="comments" javaType="ArrayList" ofType="comment" select="getComments" column="id"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="getUser" resultType="User">-->
+<!--        select * from user where id = #{id}-->
+<!--    </select>-->
+
+<!--    <resultMap id="userAndComments" type="comment">-->
+<!--        <association property="user" javaType="User" select="getUser" column="userId"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="getComments" resultMap="userAndComments">-->
+<!--        select * from comments where dynamicId = #{id}-->
+<!--    </select>-->
+
+
+
+    <insert id="addDynamic" parameterType="Dynamic">
+        insert into dynamic (userId,releasetime,invisible,tag,descriptiontext,img,likes,buyORsale,brand,quality,originalPrice,sellPrice,ISbargain,xingHao) values (#{user.id},Now(),#{invisible},#{tag},#{descriptiontext},#{img},#{likes},#{buyORsale},#{brand},#{quality},#{originalPrice},#{sellPrice},#{ISbargain},#{xingHao})
+    </insert>
+
+    <insert id="releaseComments" parameterType="comment">
+        insert into comments(dynamicId,userId,commentText) values ( #{dynamicId},#{user.id},#{commentText})
+    </insert>
+
+    <update id="upDateLikes" parameterType="int">
+        update dynamic set likes = #{likes} where id =#{id}
+    </update>
+
+    <update id="addDynamicImgclasspath">
+        update  dynamic set img = #{classpath} where id = #{dynamicID}
+    </update>
+
+
+    <update id="updatedynamic" parameterType="Dynamic">
+        update  dynamic set descriptiontext = #{descriptiontext} ,originalPrice = #{originalPrice} ,quality = #{quality} , sellPrice = #{sellPrice} where id = #{id}
+    </update>
+
+    <select id="addNewDId" resultType="int">
+        SELECT LAST_INSERT_ID() AS USERId
+    </select>
+
+    <delete id="deleteDynamic" parameterType="int">
+        DELETE FROM dynamic WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteComment" parameterType="int">
+        DELETE FROM comments WHERE CommentId = #{id}
+    </delete>
+
+    <select id="getCommentUserID" resultType="int">
+        SELECT userId from  comments  WHERE CommentId = #{Commentid}
+    </select>
+
+    <select id="getCommentID" resultType="Integer">
+        SELECT CommentID  FROM comments where CommentID=#{CommentID}
+    </select>
+
+
+
+</mapper>

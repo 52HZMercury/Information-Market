@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lostandfound.mapper.UserMapper">
+
+    <select id="queryUserList" resultType="User">
+        select * from  user
+    </select>
+
+    <select id="loadUserByUserId" resultType="User">
+        select * from user where Id = #{Id};
+    </select>
+
+    <select id="loadUserByUserPhoneNumber" resultType="User">
+        select * from user where PhoneNumber = #{PhoneNumber};
+    </select>
+
+    <select id="loadUserByUseremail" resultType="User">
+        select * from user where email = #{email};
+    </select>
+
+    <select id="loadUserMessage" resultType="User">
+        select * from user where id = #{id}
+    </select>
+
+
+<!--添加一个值并返回自增id-->
+
+    <insert id="addUser" parameterType="User" >
+        insert into user (name,password) values (#{name},#{password})
+    </insert>
+
+    <select id="addNewUerId" resultType="int">
+        SELECT LAST_INSERT_ID() AS USERId
+    </select>
+
+    <update id="upDateUser" parameterType="User">
+        update user set name =#{name}, qqnum = #{qqnum},telnum = #{telnum} ,introduction = #{introduction} where id =#{id}
+    </update>
+
+
+
+    <update id="upDateUserpassword" parameterType="User">
+        update user set password = #{password} where id =#{id}
+    </update>
+
+    <update id="updataUsersum" parameterType="int">
+        update user set dynamicSum =#{dsum}, likesSum = #{lsum}  where id =#{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="String">
+        delete from user where id = #{id}
+    </delete>
+
+
+    <update id="addheadImgpath">
+        update  user SET headImg = #{path} WHERE id= #{userId}
+    </update>
+
+</mapper>
