@@ -34,34 +34,42 @@ public class GoodsService {
     }
 
     public List<Goods> queryAllgoodslistByuserId(int id){
+        redisUtil.multi();
         //先从缓存中读取数据
         if(redisUtil.get(id+"") != null){
             return (List<Goods>)redisUtil.get(id+"");
         }else{
             List<Goods> goods = goodsMapper.queryAllgoodslistByuserId(id);
             redisUtil.setGoods(id+"",(ArrayList<Goods>) goods);
+            redisUtil.multiexec();
             return goods;
         }
     }
 
     public void deletegoods(int id){
+        redisUtil.multi();
         goodsMapper.deletegoods(id);
         redisUtil.delete(id+"");
+        redisUtil.multiexec();
     }
 
     public List<Goods> dogetmysellgoods(int userid){
+        redisUtil.multi();
         //先从缓存中读取数据
         if(redisUtil.get(userid+"") != null){
             return (List<Goods>)redisUtil.get(userid+"");
         }else{
             List<Goods> goods = goodsMapper.getmysellgoods(userid);
             redisUtil.setGoods(userid+"",(ArrayList<Goods>) goods);
+            redisUtil.multiexec();
             return goods;
         }
     }
 
     public void  dodeletemysellgoods(int dynamicId){
+        redisUtil.multi();
         goodsMapper.deletemysellgoods(dynamicId);
         redisUtil.delete(dynamicId+"");
+        redisUtil.multiexec();
     }
 }

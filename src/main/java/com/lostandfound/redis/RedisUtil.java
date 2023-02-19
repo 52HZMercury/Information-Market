@@ -29,6 +29,15 @@ public class RedisUtil {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+
+    public void multi() {
+        redisTemplate.multi();
+    }
+
+    public void multiexec() {
+        redisTemplate.exec();
+    }
     /**
      * 给一个指定的 key 值附加过期时间
      *
