@@ -78,7 +78,11 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.57</version>
         </dependency>
-
+        <!-- 集成redis依赖  -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
         <!-- 添加thymeleaf -->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->

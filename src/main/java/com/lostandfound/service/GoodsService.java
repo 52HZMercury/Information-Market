@@ -1,18 +1,14 @@
 package com.lostandfound.service;
 
-import com.jd.platform.async.executor.Async;
-import com.jd.platform.async.wrapper.WorkerWrapper;
 import com.lostandfound.mapper.GoodsMapper;
 import com.lostandfound.pojo.Goods;
-import com.lostandfound.pojo.User;
-import com.lostandfound.service.goodsworkers.goodsWorker1;
-import com.lostandfound.service.goodsworkers.goodsWorker2;
-import com.lostandfound.service.goodsworkers.goodsWorker3;
-import com.lostandfound.service.loginworkers.loginWorker1;
-import com.lostandfound.service.loginworkers.loginWorker2;
+import com.lostandfound.redis.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,29 +18,50 @@ import java.util.List;
  * @create: 2022-03-19 10:59
  **/
 @Service
+@SuppressWarnings("all")
 public class GoodsService {
 
 
     @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    private RedisUtil redisUtil;
+
+
 
     public void add_goods(Goods goods){
         goodsMapper.add_goods(goods);
     }
 
     public List<Goods> queryAllgoodslistByuserId(int id){
-        return goodsMapper.queryAllgoodslistByuserId(id);
+        //先从缓存中读取数据
+        if(redisUtil.get(id+"") != null){
+            return (List<Goods>)redisUtil.get(id+"");
+        }else{
+            List<Goods> goods = goodsMapper.queryAllgoodslistByuserId(id);
+            redisUtil.setGoods(id+"",(ArrayList<Goods>) goods);
+            return goods;
+        }
     }
 
     public void deletegoods(int id){
         goodsMapper.deletegoods(id);
+        redisUtil.delete(id+"");
     }
 
     public List<Goods> dogetmysellgoods(int userid){
-       return goodsMapper.getmysellgoods(userid);
+        //先从缓存中读取数据
+        if(redisUtil.get(userid+"") != null){
+            return (List<Goods>)redisUtil.get(userid+"");
+        }else{
+            List<Goods> goods = goodsMapper.getmysellgoods(userid);
+            redisUtil.setGoods(userid+"",(ArrayList<Goods>) goods);
+            return goods;
+        }
     }
 
     public void  dodeletemysellgoods(int dynamicId){
         goodsMapper.deletemysellgoods(dynamicId);
+        redisUtil.delete(dynamicId+"");
     }
 }
